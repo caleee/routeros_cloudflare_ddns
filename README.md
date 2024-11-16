@@ -1,6 +1,6 @@
 - [RouterOS Cloudflare DDNS](#routeros-cloudflare-ddns)
   - [介绍](#介绍)
-  - [重要](#重要)
+  - [声明](#声明)
   - [必要条件](#必要条件)
   - [使用概述](#使用概述)
   - [脚本内容解析](#脚本内容解析)
