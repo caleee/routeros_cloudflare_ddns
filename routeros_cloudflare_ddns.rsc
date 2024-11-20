@@ -5,8 +5,8 @@
 :local RECORDID "****************************";
 :local RECORDID6 "****************************";
 :local URLPRE "https://api.cloudflare.com/client/v4/zones/"
-:local URL ("$URLPRE""$ZONEID/dns_records/$RECORDID");
-:local URL6 ("https://api.cloudflare.com/client/v4/zones/" . "$ZONEID/dns_records/$RECORDID6");
+:local URL ("$URLPRE"."$ZONEID/dns_records/$RECORDID");
+:local URL6 ("$URLPRE"."$ZONEID/dns_records/$RECORDID6");
 :local TOKEN "****************************";
 :local TYPE "A";
 :local TYPE6 "AAAA";
@@ -25,7 +25,7 @@
     :set currentIPv6 [/ip cloud get public-address-ipv6];
 } else={
     :local CIDR [/ip address get [find interface="$INTERFACE"] address];
-    :local CIDR6 [/ipv6 address get [find interface="$INTERFACE"] address];
+    :local CIDR6 [/ipv6 address get [find interface=pppoe-out1 and address~"2"] address];
     :set currentIPv4 [:pick "$CIDR" 0 [:find "$CIDR" "/"]];
     :set currentIPv6 [:pick "$CIDR6" 0 [:find "$CIDR6" "/"]];
 }
