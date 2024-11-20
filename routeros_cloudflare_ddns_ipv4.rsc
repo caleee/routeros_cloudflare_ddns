@@ -3,7 +3,8 @@
 :local INTERFACE "pppoe-out1";
 :local ZONEID "****************************";
 :local RECORDID "****************************";
-:local URL ("https://api.cloudflare.com/client/v4/zones/" . "$ZONEID/dns_records/$RECORDID");
+:local URLPRE "https://api.cloudflare.com/client/v4/zones/"
+:local URL ("$URLPRE"."$ZONEID/dns_records/$RECORDID");
 :local TOKEN "****************************";
 :local TYPE "A";
 :local DOMAIN "ddns.example.com";
