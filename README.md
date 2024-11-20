@@ -41,7 +41,7 @@
 
 + 默认适用于家庭宽带设置光猫桥接并使用RouterOS软/硬路由器拨号
 + 关于ROS新功能 IP CLOUD，官方提供的DDNS功能，脚本中可选使用 cloud 命令获取公网IP，比传统方法更加直接高效
-  + 路由拨号的情况下也可以开启，也可能更适配于下面几种情况，请自行测试
+  + 路由拨号的情况下也可以开启，也可能适配于下面几种情况，请自行测试
     + 使用光猫拨号、二级路由、旁路由
     + ROS安装在云主机上有弹性公网IP服务
 + RouterOS环境可以连接Cloudflare（公网权限、DNS解析正常）
@@ -57,15 +57,47 @@
 
   + 三个版本自选，IPv4、IPv6、IPv4+IPv6
 
+  + **注意：**首先确认环境拥有的公网IP地址类型，在选对应的脚本模版
+
+    + 方法1
+
+      浏览器打开 `https://ipw.cn/`  查看 IPv4 IPv6 后面是否有地址
+
+      此方法只能说明你可以使用IPv4/IPv6浏览网页，还需要配合方法2/3进一步确认
+
+    + 方法2
+
+      RouterOS 命令行执行：
+
+      ```ros_shell
+      /ipv address print where interface=pppoe-out1
+      # 结果中如果有 “100”开头的IPv4地址，那就是ISP运营商内部地址，不能算作公网地址
+      
+      /ipv6 address print where interface=pppoe-out1
+      # 结果中查看是否有 “2” 开头的IPv6地址，“f” 开头的是本地地址
+      ```
+
+    + 方法3
+
+      RouterOS版本有`/ip cloud`功能的，命令行执行：
+
+      ```ros_shell
+      :put [/ip cloud get public-address]
+      # 直接获取拨号网卡的IPv4地址
+      
+      :put [/ip cloud get public-address-ipv6]
+      # 直接获取拨号网卡的IPv6地址，无输出则没有ipv6
+      ```
+
 + 修改脚本变量
 
 + winbox中新建 ROS Script （System-Script）或放在 /system scripts
 
 + winbox中新建计划任务（System-Scheduler）或命令行 
 
-  ```
+  ```ros_shell
   /system scheduler
-  add comment="cloudflare ddns ipv4 update" interval=5m name=ddns-cf_ipv4 on-event="/system script run ddns-cf-ipv4" policy=ftp,read,write;
+  add comment="cloudflare ddns ipv4 update" interval=5m name=ddns-cf_ipv4 on-event="/system script run ddns-cf-ipv4"
   
   # comment内容随意，interval是执行周期（5分钟执行一次），name内容随意，on-event需要对应的脚本名称
   ```
@@ -88,7 +120,7 @@
 
 + 可选值为"yes"与其他，默认关闭
 
-+ 对应使用ROS的 IP CLOUD DDNS部分功能，当参数为"yes"时利用`/ip cloud`相关命令行获取公网IP
++ 对应使用ROS的 /IP CLOUD 的获取IP的功能，当参数为"yes"时利用`/ip cloud get`命令行获取公网IP
 + 旧版本的ROS没有CLOUD功能，x86版也没有（道听途说）
 
 #### INTERFACE
@@ -99,7 +131,7 @@
 
   + 命令行 name值
 
-    ```
+    ```ros_shell
     /interface/pppoe-client/print value-list
     ```
 
@@ -168,11 +200,11 @@
 
 #### 全局变量 currentIP
 
-+ 通过命令行获取当前公网IP值
++ 通过命令行获取当前公网IP值，也可以设置成local变量
 
 #### 全局变量 previousIP
 
-+ 上次记录的公网IP值，脚本外生效，用于比对 currentIP 只有差异情况才会对接 API 修改记录值，防止无效请求
++ 上次记录的公网IP值，脚本外生效，用于比对 currentIP 只有差异情况才会对接 API 修改记录值，防止无效请求，必须设置成全局变量
 
 ---
 
