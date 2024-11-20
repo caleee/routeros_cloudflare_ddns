@@ -3,7 +3,8 @@
 :local INTERFACE "pppoe-out1";
 :local ZONEID "****************************";
 :local RECORDID6 "****************************";
-:local URL6 ("https://api.cloudflare.com/client/v4/zones/" . "$ZONEID/dns_records/$RECORDID6");
+:local URLPRE "https://api.cloudflare.com/client/v4/zones/"
+:local URL6 ("$URLPRE"."$ZONEID/dns_records/$RECORDID6");
 :local TOKEN "****************************";
 :local TYPE6 "AAAA";
 :local DOMAIN "ddns.example.com";
@@ -17,7 +18,7 @@
 :if ($CLOUD = "yes") do={
     :set currentIPv6 [/ip cloud get public-address-ipv6];
 } else={
-    :local CIDR6 [/ipv6 address get [find interface="$INTERFACE"] address];
+    :local CIDR6 [/ipv6 address get [find interface=pppoe-out1 and address~"2"] address];
     :set currentIPv6 [:pick "$CIDR6" 0 [:find "$CIDR6" "/"]];
 }
 
